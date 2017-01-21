@@ -1,0 +1,52 @@
+[
+    {
+        "name": "madcoda/php-youtube-api",
+        "version": "v1.2.1",
+        "version_normalized": "1.2.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/madcoda/php-youtube-api.git",
+            "reference": "53307963a544452419597509bc8a4c7b9bfc0366"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/madcoda/php-youtube-api/zipball/53307963a544452419597509bc8a4c7b9bfc0366",
+            "reference": "53307963a544452419597509bc8a4c7b9bfc0366",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">5.3"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "3.7.*@stable"
+        },
+        "time": "2016-11-02 11:56:08",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Madcoda\\Youtube\\": "src"
+            },
+            "classmap": [
+                "src/compat.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Madcoda",
+                "email": "jason@madcoda.com"
+            }
+        ],
+        "description": "PHP wrapper for the Youtube Data API v3",
+        "keywords": [
+            "api",
+            "madcoda",
+            "video",
+            "youtube"
+        ]
+    }
+]
