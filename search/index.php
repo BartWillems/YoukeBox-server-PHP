@@ -13,8 +13,8 @@ function fetch_videos($query = null) {
         header('HTTP/1.0 403 Forbidden');
         return false;
     }
-    require $_SERVER['DOCUMENT_ROOT'] . '/api/includes/youtube_api.php';
-    require $_SERVER['DOCUMENT_ROOT'] . '/api/vendor/autoload.php';
+    require '../includes/youtube_api.php';
+    require '../vendor/autoload.php';
     $youtube = new Madcoda\Youtube\Youtube(array('key' => DEVELOPER_KEY));
     $params  = array(
         'q'          => $query,
