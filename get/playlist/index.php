@@ -9,7 +9,7 @@ function getPlaylist(){
         return 'Database Error';
     }
 
-    $stmt = $mysqli->prepare('SELECT title, duration, added_by, timestamp FROM video ORDER BY timestamp ASC LIMIT 20');
+    $stmt = $mysqli->prepare('SELECT title, duration, added_by, timestamp FROM video ORDER BY timestamp ASC');
     if(!$stmt->execute()) {
         http_response_code(500);
         $stmt->close();
