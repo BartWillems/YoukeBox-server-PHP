@@ -35,24 +35,27 @@ function getPlaylist(){
     }
     $stmt->close();
 
-    $totalPlayTime = 0;
-    while(count($videos) > 0) {
+    $totalPlayTime  = 0;
+    $now            = time();
+    $check          = true;
+    if(count($videos) > 0) {
+        $initialPlayTime = strtotime($videos[0]['timestamp']);
+    }
+    while(count($videos) > 0 && $check) {
         // Check if the first sonk from the array is already done playing
-        $currentVideo = $videos[0];
-        $duration = getHumanTime($currentVideo['duration']);
-        $duration = explode(':',$duration);
-        // Now we have the total time of the video in seconds :D
-        $duration = $duration[0] * 3600 + $duration[1] * 60 + $duration[2];
+        $currentVideo   = $videos[0];
+        $duration       = getHumanTime($currentVideo['duration']);
+        $duration       = explode(':',$duration);
+        $duration       = $duration[0] * 3600 + $duration[1] * 60 + $duration[2];
         $totalPlayTime += $duration;
 
-        $now = time();
-        if($now - strtotime($currentVideo['timestamp']) > $totalPlayTime) {
-            $playedID = $videos[0]['id'];
+        if($now - $initialPlayTime > $totalPlayTime) {
+            $playedID = $currentVideo['id'];
             $playedID = mysqli_real_escape_string($mysqli, $playedID);
             array_shift($videos);
             $mysqli->query("UPDATE video SET played = 1 WHERE id = $playedID");
         } else {
-            break;
+            $check = false;
         }
     }
     $mysqli->close();
