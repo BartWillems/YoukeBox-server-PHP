@@ -35,6 +35,7 @@ function getPlaylist(){
     }
     $stmt->close();
 
+    $totalPlayTime = 0;
     while(count($videos) > 0) {
         // Check if the first sonk from the array is already done playing
         $currentVideo = $videos[0];
@@ -42,9 +43,10 @@ function getPlaylist(){
         $duration = explode(':',$duration);
         // Now we have the total time of the video in seconds :D
         $duration = $duration[0] * 3600 + $duration[1] * 60 + $duration[2];
+        $totalPlayTime += $duration;
 
         $now = time();
-        if($now - strtotime($currentVideo['timestamp']) > $duration) {
+        if($now - strtotime($currentVideo['timestamp']) > $totalPlayTime) {
             $playedID = $videos[0]['id'];
             $playedID = mysqli_real_escape_string($mysqli, $playedID);
             array_shift($videos);
