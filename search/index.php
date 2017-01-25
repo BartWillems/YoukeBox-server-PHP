@@ -1,6 +1,4 @@
 <?php
-error_reporting(-1);
-ini_set('display_errors', 'On');
 
 if(isset($_GET['videos'])) {
     if(isset($_GET['query'])) {
@@ -16,6 +14,9 @@ function fetch_videos($query = null) {
     require '../includes/youtube_api.php';
     require '../vendor/autoload.php';
     $youtube = new Madcoda\Youtube\Youtube(array('key' => DEVELOPER_KEY));
+    if($query  == null  || strlen($query) == 0) {
+        return array();
+    }
     $params  = array(
         'q'          => $query,
         'type'       => 'video',
