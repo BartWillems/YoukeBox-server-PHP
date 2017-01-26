@@ -59,7 +59,7 @@ function getPlaylist(){
                 $stmt->execute();
             }
             $stmt->close();
-            $timeDifference     = ($now - $initialPlayTime) - $totalPlayTime;
+            $timeDifference     = $now - $initialPlayTime;
             $videos[0]['time']  = $timeDifference;
             $check = false;
         }
