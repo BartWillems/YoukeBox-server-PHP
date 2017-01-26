@@ -17,10 +17,12 @@ function fetch_videos($query = null) {
     require '../vendor/autoload.php';
     $youtube = new Madcoda\Youtube\Youtube(array('key' => DEVELOPER_KEY));
     $params  = array(
-        'q'          => $query,
-        'type'       => 'video',
-        'part'       => 'id, snippet',
-        'maxResults' => 20
+        'q'                 => $query,
+        'type'              => 'video',
+        'part'              => 'id, snippet',
+        'maxResults'        => 20,
+        'videoEmbeddable'   => true,
+        'videoSyyndicated'  => true
     );
     $results = $youtube->searchAdvanced($params, true);
 
