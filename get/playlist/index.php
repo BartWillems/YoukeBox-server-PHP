@@ -53,9 +53,11 @@ function getPlaylist(){
         } else {
             // We should now update a video play time somewhere
             // It should say something like: $video started playing on XX:XX:XX
-            $stmt = $mysqli->prepare('UPDATE video SET timestamp = NOW() WHERE id = ?');
-            foreach($videos as $video) {
-                $stmt->bind_param('i', $video['id']);
+            $stmt = $mysqli->prepare('UPDATE video SET timestamp = UNIX_TIMESTAMP(?) WHERE id = ?');
+            $videoCount = count($videos);
+            for($i = 1; $i < $videoCount; $i++) {
+                $time = $now + $totalPlayTime;
+                $stmt->bind_param('si', $time, $videos[$i]['id']);
                 $stmt->execute();
             }
             $stmt->close();
