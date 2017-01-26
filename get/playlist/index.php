@@ -10,7 +10,7 @@ function getPlaylist(){
     }
 
     // Fetch playlist
-    $stmt = $mysqli->prepare('SELECT id, title, video_id, duration, added_by, timestamp FROM video WHERE played = 0 ORDER BY timestamp ASC');
+    $stmt = $mysqli->prepare('SELECT id, title, video_id, duration, added_by, timestamp FROM video WHERE played = 0 ORDER BY id ASC');
     if(!$stmt->execute()) {
         http_response_code(500);
         $stmt->close();
