@@ -51,8 +51,8 @@ function getPlaylist(){
             array_shift($videos);
             $mysqli->query("UPDATE video SET played = 1 WHERE id = $playedID");
         } else {
-            $timeDifference = $now - $totalPlayTime;
-            $video[0]['time'] = $timeDifference;
+            $timeDifference     = $now - $totalPlayTime;
+            $videos[0]['time']  = $timeDifference;
             $check = false;
         }
     }
