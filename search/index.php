@@ -22,8 +22,8 @@ function fetch_videos($query = null) {
         'type'              => 'video',
         'part'              => 'id, snippet',
         'maxResults'        => 20,
-        'videoEmbeddable'   => true,
-        'videoSyndicated'   => true
+        'videoEmbeddable'   => 'true',
+        'videoSyndicated'   => 'true'
     );
     $results = $youtube->searchAdvanced($params, true);
 
