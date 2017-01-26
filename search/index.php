@@ -8,7 +8,6 @@ if(isset($_GET['videos'])) {
 
 function fetch_videos($query = null) {
     if(empty($query)) {
-        header('HTTP/1.0 403 Forbidden');
         return false;
     }
     require '../includes/youtube_api.php';
