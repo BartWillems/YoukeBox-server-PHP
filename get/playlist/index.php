@@ -51,7 +51,15 @@ function getPlaylist(){
             array_shift($videos);
             $mysqli->query("UPDATE video SET played = 1 WHERE id = $playedID");
         } else {
-            $timeDifference     = $now - $totalPlayTime;
+            // We should now update a video play time somewhere
+            // It should say something like: $video started playing on XX:XX:XX
+            $stmt = $mysqli->prepare('UPDATE video SET timestamp = NOW() WHERE id = ?');
+            foreach($videos as $video) {
+                $stmt->bind_param('i', $video['id']);
+                $stmt->execute();
+            }
+            $stmt->close();
+            $timeDifference     = ($now - $initialPlayTime) - $totalPlayTime;
             $videos[0]['time']  = $timeDifference;
             $check = false;
         }
