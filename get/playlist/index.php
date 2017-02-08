@@ -43,6 +43,7 @@ function getPlaylist(){
         $duration       = getHumanTime($currentVideo['duration']);
         $duration       = explode(':',$duration);
         $duration       = $duration[0] * 3600 + $duration[1] * 60 + $duration[2];
+        $tmpDuration    = $duration;
         $totalPlayTime += $duration;
 
         if($now - $initialPlayTime > $totalPlayTime) {
@@ -53,13 +54,12 @@ function getPlaylist(){
         } else {
             // We should now update a video play time somewhere
             // It should say something like: $video started playing on XX:XX:XX
-            $stmt = $mysqli->prepare('UPDATE video SET timestamp = UNIX_TIMESTAMP(?) WHERE id = ?');
+            $stmt = $mysqli->prepare('UPDATE video SET timestamp = UNIX_TIMESTAMP(?) WHERE id > ?');
             $videoCount = count($videos);
-            for($i = 1; $i < $videoCount; $i++) {
-                $time = $now + $totalPlayTime;
-                $stmt->bind_param('si', $time, $videos[$i]['id']);
-                $stmt->execute();
-            }
+
+            $time = $now + $totalPlayTime - $tmpDuration;
+            $stmt->bind_param('si', $time, $videos[0]['id']);
+            $stmt->execute();
             $stmt->close();
             $timeDifference     = $now - $initialPlayTime;
             $videos[0]['time']  = $timeDifference;
