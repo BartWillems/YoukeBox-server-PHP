@@ -15,8 +15,9 @@ function addVideo($video=null, $user=null){
         return 'Database Error';
     }
 
-    $stmt = $mysqli->prepare('INSERT INTO video (video_id, title, duration, added_by) VALUES(?,?,?,?)');
-    $stmt->bind_param('ssss', $video['id'], $video['snippet']['title'], $video['contentDetails']['duration'], $user);
+    $now = date("Y-m-d H:i:s");
+    $stmt = $mysqli->prepare('INSERT INTO video (video_id, title, duration, added_by, timestamp) VALUES(?,?,?,?,?)');
+    $stmt->bind_param('sssss', $video['id'], $video['snippet']['title'], $video['contentDetails']['duration'], $user, $now);
     if(!$stmt->execute()) {
         http_response_code(500);
         $stmt->close();
