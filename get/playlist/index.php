@@ -32,6 +32,7 @@ function getPlaylist(){
     $stmt->close();
 
     $totalPlayTime  = 0;
+    $videoPurged    = false;
     $now            = time();
     $check          = true;
     if(count($videos) > 0) {
@@ -51,6 +52,7 @@ function getPlaylist(){
             $playedID = mysqli_real_escape_string($mysqli, $playedID);
             array_shift($videos);
             $mysqli->query("UPDATE video SET played = 1 WHERE id = $playedID");
+            $videoPurged = true;
         } else {
             // We should now update a video play time somewhere
             // It should say something like: $video started playing on XX:XX:XX
@@ -58,11 +60,18 @@ function getPlaylist(){
             $videoCount = count($videos);
 
             $time = $now + $totalPlayTime - $tmpDuration;
+            //if($videoPurged) {
+            //    $time = $time - $totalPlayTime;
+            //}
             $stmt->bind_param('si', $time, $videos[0]['id']);
             $stmt->execute();
             $stmt->close();
             $timeDifference     = $now - $initialPlayTime;
-            $videos[0]['time']  = $timeDifference;
+            if($videoPurged) {
+                $videos[0]['time']  = 0;
+            } else {
+                $videos[0]['time']  = $timeDifference;
+            }
             $check = false;
         }
     }
