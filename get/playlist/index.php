@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 echo json_encode(getPlaylist());
 
 function getPlaylist(){
@@ -35,6 +37,47 @@ function getPlaylist(){
     $videoPurged    = false;
     $now            = time();
     $check          = true;
+    $result = array();
+
+    // Only refresh the queue every 2 seconds
+    // Store the updateTime in the memcache object
+    $m = new Memcached();
+    $m->addServer('localhost', 11211);
+
+    // Fetch the current list of users
+    $session['id']      = session_id();
+    $session['time']    = time();
+
+    $connectedUsers = (array)$m->get('connectedUsers');
+    if($m->getResultCode() == Memcached::RES_NOTFOUND || $connectedUsers === FALSE) {
+        $users = array();
+        array_push($users, $session);
+        $m->set('connectedUsers', $users);
+        $userCount = 1;
+    } else {
+        $userExists = false;
+        foreach($connectedUsers as $key => &$user) {
+            // Update the current user's timestamp
+            if($user['id'] === session_id()) {
+
+                $user['time']   = time();
+                $userExists     = true;
+
+            }
+            // Remove vacant users
+            if(time() - $user['time'] > 60) {
+                unset($connectedUsers[$key]);
+            }
+        }
+        // If the current user didn't have an entry, add him to the list
+        if(!$userExists) {
+            $user = array('id' => session_id(), 'time' => time());
+            array_push($connectedUsers, $user);
+        }
+        $m->set('connectedUsers', $connectedUsers);
+        $userCount = count($connectedUsers);
+    }
+
     if(count($videos) > 0) {
         $initialPlayTime = strtotime($videos[0]['timestamp']);
     }
@@ -60,9 +103,7 @@ function getPlaylist(){
             $videoCount = count($videos);
 
             $time = $now + $totalPlayTime - $tmpDuration;
-            //if($videoPurged) {
-            //    $time = $time - $totalPlayTime;
-            //}
+
             $stmt->bind_param('si', $time, $videos[0]['id']);
             $stmt->execute();
             $stmt->close();
@@ -76,7 +117,10 @@ function getPlaylist(){
         }
     }
     $mysqli->close();
-    return $videos;
+
+    $result['videos'] = $videos;
+    $result['meta'] = array('userCount' => $userCount);
+    return $result;
 }
 
 function getHumanTime($youtube_time){
