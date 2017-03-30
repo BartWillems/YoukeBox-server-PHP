@@ -37,16 +37,13 @@ function getPlaylist(){
     $videoPurged    = false;
     $now            = time();
     $check          = true;
+    $sessID         = session_id();
     $result = array();
 
     // Only refresh the queue every 2 seconds
     // Store the updateTime in the memcache object
     $m = new Memcached();
     $m->addServer('localhost', 11211);
-
-    // Fetch the current list of users
-    $session['id']      = session_id();
-    $session['time']    = time();
 
     $connectedUsers = (array)$m->get('connectedUsers');
     if($m->getResultCode() == Memcached::RES_NOTFOUND || $connectedUsers === FALSE) {
@@ -58,23 +55,25 @@ function getPlaylist(){
         $userExists = false;
         foreach($connectedUsers as $key => &$user) {
             // Update the current user's timestamp
-            if($user['id'] === session_id()) {
-
+            if($user['id'] === $sessID) {
                 $user['time']   = time();
                 $userExists     = true;
-
             }
             // Remove vacant users
-            if(time() - $user['time'] > 60) {
+            if(time() - $user['time'] > 10) {
                 unset($connectedUsers[$key]);
             }
         }
+        // http://php.net/manual/en/control-structures.foreach.php Pass by reference bug
+        // If I don't unset this motherfucker, it will be added twice to the list
+        unset($user);
         // If the current user didn't have an entry, add him to the list
-        if(!$userExists) {
-            $user = array('id' => session_id(), 'time' => time());
+        if($userExists === false && !empty($sessID)) {
+            $user = array('id' => $sessID, 'time' => time());
             array_push($connectedUsers, $user);
         }
-        $m->set('connectedUsers', $connectedUsers);
+        $result['debug'] = $connectedUsers;
+        $m->replace('connectedUsers', $connectedUsers);
         $userCount = count($connectedUsers);
     }
 
@@ -128,6 +127,5 @@ function getHumanTime($youtube_time){
     $start->add(new DateInterval($youtube_time));
     return $start->format('H:i:s');
 }
-
 
 ?>
