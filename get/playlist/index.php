@@ -48,7 +48,7 @@ function getPlaylist(){
     $connectedUsers = (array)$m->get('connectedUsers');
     if($m->getResultCode() == Memcached::RES_NOTFOUND || $connectedUsers === FALSE) {
         $users = array();
-        array_push($users, $session);
+        array_push($users, $sessID);
         $m->set('connectedUsers', $users);
         $userCount = 1;
     } else {
@@ -72,7 +72,6 @@ function getPlaylist(){
             $user = array('id' => $sessID, 'time' => time());
             array_push($connectedUsers, $user);
         }
-        $result['debug'] = $connectedUsers;
         $m->replace('connectedUsers', $connectedUsers);
         $userCount = count($connectedUsers);
     }
